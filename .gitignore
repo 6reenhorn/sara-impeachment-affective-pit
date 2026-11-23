@@ -6,3 +6,5 @@ __pycache__/
 .DS_Store
 # Keep raw un-anonymized exports out of Git if you ever save any manually
 data/raw/*_unclean*
+# Reddit source JSON snapshots stay local-only
+data/raw/reddit_json/
