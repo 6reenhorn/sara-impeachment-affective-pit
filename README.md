@@ -4,7 +4,7 @@
 **Instructor:** Love Jhoye M. Raboy, PhD  
 **Topic:** Public Sentiment & Emotion Mining on Vice President Sara Duterte's Impeachment Trial (Philippines)  
 **Platforms:** YouTube (10 Philippine news outlets, 33 videos) and Reddit (`r/Philippines`)  
-**Current Status:** End-to-end Stages 1–5 implemented (`14,110` raw → `11,969` clean comments). Lexicon & comparative pipelines complete; ML models currently use the **Provisional Consensus Baseline** while the **5-member Human Gold Standard** sheets (`data/annotated/sheets/member_1.csv` .. `member_5.csv`) await team annotation.
+**Current Status:** All Stages 1–5 complete on the **5-Member Human Gold Standard** (`14,110` raw → `11,969` clean comments; `1,050` gold-labeled comments with Fleiss' $\kappa = 0.8409$). Supervised TF-IDF ML (`71.9%` Accuracy MNB; `0.5235` Macro-F1 LogReg) more than doubles standalone English lexicons (`23.3%–31.4%` Accuracy).
 
 ---
 
@@ -72,6 +72,8 @@ sara-impeachment-affective-pit/
 │   ├── processed/                  # all_comments_clean.csv, youtube_comments_clean.csv, full_corpus_predictions.csv
 │   └── annotated/
 │       ├── ANNOTATION_GUIDELINES.md
+│       ├── gold_labels.csv         # Merged 1,050-row 5-member Human Gold Standard
+│       ├── inter_annotator_report.txt
 │       ├── sample_index.csv
 │       └── sheets/                 # member_1.csv .. member_5.csv (250 rows each: 50 shared + 200 unique)
 ├── deliverables/                   # Exact instructor-required outputs + 300 DPI charts

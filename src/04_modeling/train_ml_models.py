@@ -68,6 +68,8 @@ def load_modeling_data(mode: str) -> tuple[pd.DataFrame, str]:
             raise FileNotFoundError(f"Gold mode requested, but {GOLD_FILE} does not exist.")
         gold_df = pd.read_csv(GOLD_FILE, encoding="utf-8-sig")
         key_col = "comment_id" if "comment_id" in gold_df.columns and gold_df["comment_id"].notna().all() else "text_clean"
+        merged[key_col] = merged[key_col].fillna("").astype(str)
+        gold_df[key_col] = gold_df[key_col].fillna("").astype(str)
         sub = merged.merge(
             gold_df[[key_col, "gold_label"]].drop_duplicates(subset=[key_col]),
             on=key_col,
