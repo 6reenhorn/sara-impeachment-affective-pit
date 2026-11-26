@@ -1,76 +1,74 @@
 ==============================================================================
 CS412 WEEK 14 PIT — TASK 4: ML-BASED SENTIMENT ANALYSIS RESULTS
-Label Source: PROVISIONAL BASELINE — PENDING 5-MEMBER HUMAN GOLD LABELS
-NOTE: Run `python src/04_modeling/merge_annotations.py` once the 5-member
-      annotation sheets are filled, then re-run `train_ml_models.py`.
+Label Source: HUMAN GOLD STANDARD (5-Member Annotated)
 ==============================================================================
 
-Dataset Size (deduplicated lemmatized): 6,209
-Train Split (80%): 4,967 | Held-Out Test Split (20%): 1,242
+Dataset Size (deduplicated lemmatized): 1,050
+Train Split (80%): 840 | Held-Out Test Split (20%): 210
 Train/Test Text Overlap: 0 (verified zero leakage)
 
 Class Distribution in Modeling Dataset:
-  Negative  :   418 (6.7%)
-  Neutral   : 4,521 (72.8%)
-  Positive  : 1,270 (20.5%)
+  Negative  :   739 (70.4%)
+  Neutral   :   213 (20.3%)
+  Positive  :    98 (9.3%)
 
 --- 5-Fold Stratified Cross-Validation (Train Split Only) ---
-Logistic Regression best params: {'clf__C': 5.0} | CV Macro-F1: 0.8576 +/- 0.0131
-Multinomial NB best params:      {'clf__alpha': 0.1} | CV Macro-F1: 0.7229 +/- 0.0139
+Logistic Regression best params: {'clf__C': 0.1} | CV Macro-F1: 0.5266 +/- 0.0200
+Multinomial NB best params:      {'clf__alpha': 0.1} | CV Macro-F1: 0.4633 +/- 0.0411
 
 --- Held-Out Test Set Comparison (All Methods on Identical 20% Test Split) ---
                             Method Accuracy Precision (Macro) Recall (Macro) F1 (Macro) F1 (Weighted)
-                   VADER (Lexicon)   1.0000            1.0000         1.0000     1.0000        1.0000
-                TextBlob (Lexicon)   1.0000            1.0000         1.0000     1.0000        1.0000
-                   AFINN (Lexicon)   1.0000            1.0000         1.0000     1.0000        1.0000
-           Multinomial NB (TF-IDF)   0.8841            0.8751         0.7353     0.7843        0.8785
-      Logistic Regression (TF-IDF)   0.9461            0.9092         0.8651     0.8857        0.9450
-LogReg (Word+Char TF-IDF Ablation)   0.9517            0.9155         0.8832     0.8986        0.9510
+                   VADER (Lexicon)   0.3000            0.4022         0.4311     0.2899        0.3163
+                TextBlob (Lexicon)   0.2333            0.3425         0.3977     0.2325        0.1809
+                   AFINN (Lexicon)   0.3143            0.3957         0.4751     0.3203        0.3081
+           Multinomial NB (TF-IDF)   0.7190            0.5912         0.4495     0.4710        0.6649
+      Logistic Regression (TF-IDF)   0.6476            0.5067         0.5613     0.5235        0.6495
+LogReg (Word+Char TF-IDF Ablation)   0.6429            0.5102         0.5633     0.5307        0.6455
 
 Best Primary ML Model: Logistic Regression (TF-IDF)
 
 --- Detailed Classification Report: TF-IDF + Logistic Regression ---
               precision    recall  f1-score   support
 
-    Negative     0.8026    0.7262    0.7625        84
-     Neutral     0.9508    0.9834    0.9668       904
-    Positive     0.9740    0.8858    0.9278       254
+    Negative     0.7817    0.7500    0.7655       148
+     Neutral     0.3514    0.3023    0.3250        43
+    Positive     0.3871    0.6316    0.4800        19
 
-    accuracy                         0.9461      1242
-   macro avg     0.9092    0.8651    0.8857      1242
-weighted avg     0.9455    0.9461    0.9450      1242
+    accuracy                         0.6476       210
+   macro avg     0.5067    0.5613    0.5235       210
+weighted avg     0.6579    0.6476    0.6495       210
 
 Confusion Matrix (rows=True [Neg, Neu, Pos], cols=Pred [Neg, Neu, Pos]):
-[[ 61  20   3]
- [ 12 889   3]
- [  3  26 225]]
+[[111  23  14]
+ [ 25  13   5]
+ [  6   1  12]]
 
 --- Detailed Classification Report: TF-IDF + Multinomial Naive Bayes ---
               precision    recall  f1-score   support
 
-    Negative     0.9130    0.5000    0.6462        84
-     Neutral     0.9002    0.9580    0.9282       904
-    Positive     0.8120    0.7480    0.7787       254
+    Negative     0.7487    0.9459    0.8358       148
+     Neutral     0.4000    0.1395    0.2069        43
+    Positive     0.6250    0.2632    0.3704        19
 
-    accuracy                         0.8841      1242
-   macro avg     0.8751    0.7353    0.7843      1242
-weighted avg     0.8830    0.8841    0.8785      1242
+    accuracy                         0.7190       210
+   macro avg     0.5912    0.4495    0.4710       210
+weighted avg     0.6661    0.7190    0.6649       210
 
 Confusion Matrix (rows=True [Neg, Neu, Pos], cols=Pred [Neg, Neu, Pos]):
-[[ 42  32  10]
- [  4 866  34]
- [  0  64 190]]
+[[140   6   2]
+ [ 36   6   1]
+ [ 11   3   5]]
 
 --- Interpretability ---
 Top Logistic Regression TF-IDF Features by Class:
 
-  Negative: guilty, unfair, fake, impeachment, wrong, bad, corrupt, criminal, waste, stupid, evil, no, useless, wtf, bitter
+  Negative: hahaha, walang, wala, puro, nyo, ano, hindi, pera, gusto, bakit, niyo, alam, di, hahahaha, bat
 
-  Positive: hahaha, haha, good, lol, wow, true, win, fair, cute, legal, love, proud, natural, fit, best
+  Positive: atty, tama, vp, diokno, bless, god bless, ganda, duterte, good, go, statement, god, kudos, galing, matapang
 
-  Neutral:  magaling, ibang, malaman, dapat, imbistigahan, kaba, one side, bakit, hininga, npa, hehehe, nagsasalita, sablay, ninakaw, fact
+  Neutral:  preside, senate, officer, sino, ganun, preside officer, face, talk, win, nalang, oo, mismo, money, not, dun
 
 --- Full-Corpus ML Sentiment Distribution (n = 11,969) ---
-  Negative  :  1,447 (12.1%)
-  Neutral   :  8,388 (70.1%)
-  Positive  :  2,134 (17.8%)
+  Negative  :  7,993 (66.8%)
+  Neutral   :  2,436 (20.4%)
+  Positive  :  1,540 (12.9%)

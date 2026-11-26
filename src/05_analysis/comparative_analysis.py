@@ -22,6 +22,7 @@ FULL_PRED_FILE = Path("data/processed/full_corpus_predictions.csv")
 LEXICON_SUMMARY = Path("deliverables/lexicon_summary.txt")
 ML_RESULTS = Path("deliverables/ml_results.txt")
 PREPROC_SUMMARY = Path("deliverables/preprocessing_summary.txt")
+IAA_REPORT = Path("data/annotated/inter_annotator_report.txt")
 SOURCES_CSV = Path("src/01_mining/sources.csv")
 
 CHARTS_DIR = Path("deliverables/charts")
@@ -240,6 +241,8 @@ def main():
     ml_txt = ML_RESULTS.read_text(encoding="utf-8") if ML_RESULTS.exists() else ""
     lex_txt = LEXICON_SUMMARY.read_text(encoding="utf-8") if LEXICON_SUMMARY.exists() else ""
     pre_txt = PREPROC_SUMMARY.read_text(encoding="utf-8") if PREPROC_SUMMARY.exists() else ""
+    iaa_txt = IAA_REPORT.read_text(encoding="utf-8") if IAA_REPORT.exists() else ""
+    fleiss_line = next((ln.strip() for ln in iaa_txt.splitlines() if "Fleiss" in ln), "")
     is_provisional = "PROVISIONAL" in str(df["ml_label_source"].iloc[0])
 
     total_raw = len(raw_df)
@@ -262,6 +265,11 @@ def main():
         else "> **STATUS: FINAL HUMAN GOLD STANDARD** — All ML metrics and full-corpus predictions are grounded on the 5-member human-annotated gold set.\n\n"
     )
 
+    iaa_section = (
+        f"### 5-Member Inter-Annotator Agreement\n```text\n{iaa_txt.strip()}\n```\n\n"
+        if iaa_txt
+        else ""
+    )
     yt_links_md = "\n".join(f"  - `{row['channel']}` ({row['topic_tag']}): {row['url']}" for _, row in sources_df.iterrows()) if not sources_df.empty else "  - See `src/01_mining/sources.csv`"
 
     md = f"""# CS412 Week 14 PIT — Comparative Analysis, Presentation & Lab Form
@@ -308,7 +316,7 @@ def main():
    - **Title:** Public Sentiment & Affective Analysis of VP Sara Duterte's Impeachment Trial (YouTube & Reddit)
    - **Course:** CS412 — CS Elective 2 (Affective Computing) | 1st Sem, SY 2026–2027
    - **Instructor:** Love Jhoye M. Raboy, PhD
-   - **Group Members (5):** John Cyril Espina, *(Add Member 2)*, *(Add Member 3)*, *(Add Member 4)*, *(Add Member 5)*
+   - **Group Members (5):** John Cyril Espina, Den Jester Antonio, Sophia Marie Flores, John Jaybird Casia, Glenn Mark Anino
 2. **Slide 2 — Introduction**
    - Domain: High-stakes Philippine political & constitutional event (2026 Senate Impeachment Trial of VP Sara Duterte).
    - Why it matters: Understanding civic emotion (anger, distrust, hope, support) across broadcast news audiences (YouTube) and civic forums (Reddit) connects NLP directly to Affective Computing.
@@ -325,6 +333,7 @@ def main():
    - Embed `lexicon_sentiment_distribution.png`, `lexicon_polarity_histograms.png`, and `lexicon_neutral_by_language.png`.
    - Highlight sample outputs and the Neutral spike caused by Tagalog/Taglish/Bisaya text.
 6. **Slide 6 — ML-Based Analysis (TF-IDF + Logistic Regression & Naive Bayes)**
+   - Human Gold Standard: 1,050 stratified comments annotated by 5 members{f" ({fleiss_line})" if fleiss_line else ""}.
    - Feature extraction: TF-IDF word n-grams `(1, 2)` (`sublinear_tf=True`, `max_features=10,000`) + 5-fold stratified CV on 80% train split, evaluated on 20% held-out test split.
    - Embed `deliverables/confusion_matrix.png`, `model_comparison_f1.png`, and `top_tfidf_features.png`.
 7. **Slide 7 — Comparison & Discussion**
@@ -349,13 +358,13 @@ def main():
 - **Summary Metrics Snapshot:**
   - Raw Dataset: `{total_raw:,}` comments | Clean Dataset: `{total_clean:,}` comments (`{yt_clean_n:,}` YouTube, `{rd_clean_n:,}` Reddit)
   - Lexicons Used: VADER, TextBlob, AFINN (all 3 implemented)
-  - ML Models Used: TF-IDF + Logistic Regression & Multinomial Naive Bayes
+  - ML Models Used: TF-IDF + Logistic Regression & Multinomial Naive Bayes{f" | {fleiss_line}" if fleiss_line else ""}
 
 ---
 
 ## Appendix: Embedded Metrics Logs
 
-### Preprocessing Summary
+{f"### 5-Member Inter-Annotator Agreement\\n```text\\n{iaa_txt.strip()}\\n```\\n" if iaa_txt else ""}### Preprocessing Summary
 ```text
 {pre_txt.strip()}
 ```

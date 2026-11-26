@@ -1,0 +1,23 @@
+=== 5-Member Inter-Annotator Agreement Report ===
+Shared calibration items: 50
+5-Rater Fleiss' Kappa:    0.8409
+
+Pairwise Cohen's Kappa:
+  member_1 vs member_2: kappa = 0.8239 (raw match = 92.0%)
+  member_1 vs member_3: kappa = 0.8328 (raw match = 92.0%)
+  member_1 vs member_4: kappa = 0.7913 (raw match = 90.0%)
+  member_1 vs member_5: kappa = 0.8677 (raw match = 94.0%)
+  member_2 vs member_3: kappa = 0.9178 (raw match = 96.0%)
+  member_2 vs member_4: kappa = 0.7942 (raw match = 90.0%)
+  member_2 vs member_5: kappa = 0.7850 (raw match = 90.0%)
+  member_3 vs member_4: kappa = 0.8809 (raw match = 94.0%)
+  member_3 vs member_5: kappa = 0.8769 (raw match = 94.0%)
+  member_4 vs member_5: kappa = 0.8361 (raw match = 92.0%)
+
+Calibration tie-breaks resolved: 0
+
+Merged Gold Standard Rows: 1,050
+Label Distribution:
+  Negative  :  739 (70.4%)
+  Neutral   :  213 (20.3%)
+  Positive  :   98 (9.3%)
