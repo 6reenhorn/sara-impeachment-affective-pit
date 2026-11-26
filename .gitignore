@@ -8,3 +8,4 @@ __pycache__/
 data/raw/*_unclean*
 # Reddit source JSON snapshots stay local-only
 data/raw/reddit_json/
+.pytest_cache/

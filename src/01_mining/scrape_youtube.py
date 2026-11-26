@@ -117,12 +117,20 @@ def main():
             print(f"  !! Skipped {row['url']} due to error: {exc}")
         time.sleep(2)  # Polite pause between videos
 
-    if not all_rows:
+    if not all_rows and not OUTPUT_FILE.exists():
         raise RuntimeError("No comments were collected. Check your URLs and connection.")
 
-    df = pd.DataFrame(all_rows)
+    new_df = pd.DataFrame(all_rows)
+    if OUTPUT_FILE.exists():
+        existing_df = pd.read_csv(OUTPUT_FILE, encoding="utf-8-sig")
+        print(f"Loaded {len(existing_df)} existing rows from {OUTPUT_FILE} for incremental merge.")
+        # Put newly scraped rows first so fresher counts/likes win on comment_id dedup
+        df = pd.concat([new_df, existing_df], ignore_index=True)
+    else:
+        df = new_df
+
     raw_count = len(df)
-    df = df.drop_duplicates(subset=["comment_id"]).reset_index(drop=True)
+    df = df.drop_duplicates(subset=["comment_id"], keep="first").reset_index(drop=True)
 
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     # utf-8-sig keeps Tagalog/Bisaya characters and emojis intact when opened in Excel

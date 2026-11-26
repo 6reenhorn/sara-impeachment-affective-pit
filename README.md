@@ -1,54 +1,64 @@
 # Public Affective Analysis of VP Sara Duterte's Impeachment (YouTube & Reddit)
 
-**Course:** CS412 — Affective Computing (PIT)  
+**Course:** CS412 — CS Elective 2 (Affective Computing, 1st Sem SY 2026–2027)  
+**Instructor:** Love Jhoye M. Raboy, PhD  
 **Topic:** Public Sentiment & Emotion Mining on Vice President Sara Duterte's Impeachment Trial (Philippines)  
-**Platforms:** YouTube (PH news channels) and Reddit (r/Philippines megathread)  
-**Current Status:** Stages 1 (Text Mining) and 2 (Preprocessing) complete for YouTube; Reddit mining complete and ready for preprocessing; Stage 3 (Modeling & Analysis) pending final project rubric.
+**Platforms:** YouTube (10 Philippine news outlets, 33 videos) and Reddit (`r/Philippines`)  
+**Current Status:** End-to-end Stages 1–5 implemented (`14,110` raw → `11,969` clean comments). Lexicon & comparative pipelines complete; ML models currently use the **Provisional Consensus Baseline** while the **5-member Human Gold Standard** sheets (`data/annotated/sheets/member_1.csv` .. `member_5.csv`) await team annotation.
 
 ---
 
 ## Dataset Summary
 
-| Platform | Sources | Comment Records | Unique Commenters |
-| :--- | :--- | ---: | ---: |
-| YouTube | 18 news clips & trial coverages across 8 Philippine news outlets | 5,717 raw → 4,938 clean | 3,740 |
-| Reddit | 1 public megathread on r/Philippines | 1,346 (after cross-sort deduplication) | 371 |
-| **Total** | **19 sources** | **6,284 usable records** | **4,111 (platform totals; cross-platform overlap not measurable)** |
+| Platform | Sources | Raw Merged Records | Final Clean Comments | Unique Commenters (Clean) |
+| :--- | :--- | ---: | ---: | ---: |
+| YouTube | 33 news clips & trial coverages across 10 Philippine news outlets | 12,779 | 11,102 | 8,405 |
+| Reddit | Public megathread on `r/Philippines` (expandable with additional threads) | 1,331 | 867 | 362 |
+| **Total** | **34 sources** | **14,110** | **11,969** | **8,767** |
 
-- **YouTube collection date:** November 20, 2026
-- **Reddit thread activity window:** July 6–7, 2026 (UTC); captured from public thread JSON snapshots
-- **Anonymization:** All usernames are replaced with one-way SHA-256 hashes. No plain-text usernames are stored.
+- **YouTube collection:** Expanded November 25, 2026 across 10 outlets (`ABS-CBN News`, `UNTV News and Rescue`, `TV5 News Philippines`, `GMA News`, `NET25 News and Information`, `Rappler`, `Bilyonaryo News Channel`, `Philstar News`, `INQUIRER.net`, `ANC 24/7`).
+- **Reddit collection:** Public `r/Philippines` thread JSON snapshots (`1uophc7`), July 6–7, 2026 UTC.
+- **Ethical & Privacy Compliance:** Only public posts/comments are collected, with zero interaction. Usernames/author IDs are one-way SHA-256 hashed for anti-spam deduplication, and inline `@handle` / `u/handle` mentions + HTML entities are scrubbed from comment bodies. The rubric deliverable `deliverables/raw_comments.csv` contains only `platform`, `timestamp_utc`, `likes`, and `text`.
 
-### Preprocessing & Cleaning Funnel (YouTube)
+### Unified Preprocessing & Cleaning Funnel
 
-| Stage | Remaining Comments | Removed |
+| Stage | Total | YouTube | Reddit |
+| :--- | ---: | ---: | ---: |
+| 0. Raw merged & PII-scrubbed input (`all_comments_raw.csv`) | 14,110 | 12,779 | 1,331 |
+| 1. Clean HTML/URLs/handles & drop empty/URL-only | 13,888 | 12,560 | 1,328 |
+| 2. Exact normalized-text deduplication | 13,573 | 12,245 | 1,328 |
+| 3. Keep comments with $\ge$ 3 words | 12,903 | 11,641 | 1,262 |
+| 4. Cap at $\le$ 5 comments per unique `(platform, user_hash)` | **11,969** | **11,102** | **867** |
+| 5. Tokenize + EN/FIL stopword removal (negations kept) + POS lemmatization | **11,969** | **11,102** | **867** |
+
+### Clean Dataset Distribution by Source
+
+| Source | Clean Comments | Share of Total |
 | :--- | ---: | ---: |
-| 0. Raw scraped input (`youtube_comments_raw.csv`) | 5,717 | — |
-| 1. Remove empty / URL-only rows | 5,610 | -107 |
-| 2. Exact-text deduplication (copy-paste spam removal) | 5,475 | -135 |
-| 3. Keep comments with $\ge$ 3 words | 5,198 | -277 |
-| 4. Cap at $\le$ 5 comments per unique user hash | **4,938** | -260 |
+| ABS-CBN News (YouTube) | 2,993 | 25.0% |
+| UNTV News and Rescue (YouTube) | 2,819 | 23.6% |
+| TV5 News Philippines (YouTube) | 2,510 | 21.0% |
+| GMA News (YouTube) | 1,720 | 14.4% |
+| r/Philippines (Reddit) | 867 | 7.2% |
+| NET25 News and Information (YouTube) | 570 | 4.8% |
+| Rappler (YouTube) | 208 | 1.7% |
+| Bilyonaryo News Channel (YouTube) | 149 | 1.2% |
+| Philstar News (YouTube) | 64 | 0.5% |
+| INQUIRER.net (YouTube) | 39 | 0.3% |
+| ANC 24/7 (YouTube) | 30 | 0.3% |
+| **Total** | **11,969** | **100.0%** |
 
-### Clean YouTube Dataset Distribution by Channel
+---
 
-| News Channel | Clean Comments | Share |
-| :--- | ---: | ---: |
-| ABS-CBN News | 1,600 | 32.4% |
-| UNTV News and Rescue | 1,482 | 30.0% |
-| GMA News | 1,051 | 21.3% |
-| NET25 News and Information | 273 | 5.5% |
-| TV5 News Philippines | 177 | 3.6% |
-| Rappler | 158 | 3.2% |
-| Bilyonaryo News Channel | 146 | 3.0% |
-| Philstar News | 51 | 1.0% |
-| **Total** | **4,938** | **100.0%** |
+## Key Rubric Deliverables (`deliverables/`)
 
-### Reddit Dataset Notes
-
-- Source thread: [r/Philippines — Megathread: Impeachment Trial of Vice President Sara Duterte](https://www.reddit.com/r/Philippines/comments/1uophc7/megathread_impeachment_trial_of_vice_president/)
-- Collected from five sort-order snapshots (`top`, `new`, `controversial`, `old`, `qa`) of the same thread.
-- The parser removes deleted/removed comments, comments shorter than 3 characters, and duplicates that appear across sort orders (normalized-text comparison).
-- Final output: **1,346 comment records** from **371 anonymized commenters**.
+| Rubric Task | Deliverable File(s) | Description |
+| :--- | :--- | :--- |
+| **Task 1: Data Collection** | `deliverables/raw_comments.csv` | 14,110 raw anonymized comments (`platform`, `timestamp_utc`, `likes`, `text` only) |
+| **Task 2: Preprocessing** | `deliverables/cleaned_comments.csv`<br>`deliverables/preprocessing_summary.txt` | 11,969 cleaned comments with `text_clean`, `tokens`, `tokens_no_stop`, `text_lemmatized` |
+| **Task 3: Lexicon Sentiment** | `deliverables/lexicon_results.csv`<br>`deliverables/charts/lexicon_*.png` | VADER, TextBlob, and AFINN polarity scores, labels, agreement matrix & language diagnostics |
+| **Task 4: ML Sentiment** | `deliverables/ml_results.txt`<br>`deliverables/confusion_matrix.png` | TF-IDF (1–2 grams) + Logistic Regression & Multinomial Naive Bayes metrics + confusion matrices |
+| **Task 5 & 6: Analysis & Slides** | `deliverables/comparative_analysis.md`<br>`deliverables/charts/*.png` | Task 5 Q&A, 9-slide Task 6 outline, disagreement case studies, Page 5 Lab Form notes |
 
 ---
 
@@ -57,96 +67,69 @@
 ```text
 sara-impeachment-affective-pit/
 ├── data/
-│   ├── raw/
-│   │   ├── youtube_comments_raw.csv        # Anonymized YouTube scrape
-│   │   ├── reddit_comments_raw.csv         # Anonymized Reddit parse output
-│   │   └── reddit_json/                    # Local-only saved Reddit JSON (gitignored)
-│   └── processed/
-│       └── youtube_comments_clean.csv      # Cleaned YouTube dataset ready for modeling
+│   ├── raw/                        # youtube_comments_raw.csv, reddit_comments_raw.csv, all_comments_raw.csv
+│   ├── external/                   # Optional additional CSV exports from teammates
+│   ├── processed/                  # all_comments_clean.csv, youtube_comments_clean.csv, full_corpus_predictions.csv
+│   └── annotated/
+│       ├── ANNOTATION_GUIDELINES.md
+│       ├── sample_index.csv
+│       └── sheets/                 # member_1.csv .. member_5.csv (250 rows each: 50 shared + 200 unique)
+├── deliverables/                   # Exact instructor-required outputs + 300 DPI charts
 ├── src/
-│   ├── 01_mining/
-│   │   ├── scrape_youtube.py               # YouTube comment scraper
-│   │   ├── sources.csv                     # YouTube video list
-│   │   └── parse_reddit_json.py            # Reddit saved-JSON parser
-│   ├── 02_preprocessing/
-│   │   └── clean_comments.py               # YouTube deduplication, user capping, dual-text cleaning
-│   └── 03_modeling/                        # Feature extraction & affective classification (upcoming)
-├── notebooks/                              # Exploratory analysis and modeling notebooks (upcoming)
-├── requirements.txt
-└── README.md
+│   ├── 01_mining/                  # scrape_youtube.py, sources.csv, parse_reddit_json.py, merge_raw_datasets.py
+│   ├── 02_preprocessing/           # clean_comments.py (cleaning, tokenization, EN/FIL stopwords, lemmatization)
+│   ├── 03_lexicon/                 # run_lexicons.py (VADER, TextBlob, AFINN)
+│   ├── 04_modeling/                # prepare_annotation_sheets.py, merge_annotations.py, train_ml_models.py
+│   └── 05_analysis/                # comparative_analysis.py
+├── tests/
+│   └── verify_deliverables.py      # Automated ethics, schema, NLP, ML, and annotation-sheet checks
+├── run_pipeline.py                 # Single-command runner for Stages 1b -> 5
+└── requirements.txt
 ```
 
 ---
 
-## How to Reproduce
+## How to Reproduce & Complete Team Workflows
 
-### 0. Install dependencies
-
-Run from the repository root:
+### 0. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 1a. Mine YouTube comments
-
-Edit `src/01_mining/sources.csv` if needed, then run:
+### 1. Run the Full Pipeline
 
 ```bash
-python src/01_mining/scrape_youtube.py
+python run_pipeline.py
 ```
 
-The scraper reads every URL in `sources.csv`, collects comments, deduplicates by comment ID, and writes `data/raw/youtube_comments_raw.csv`.
+### 2. Optional: Add More `r/Philippines` Reddit Threads
 
-### 1b. Mine Reddit comments
-
-Reddit data is collected from browser-saved JSON snapshots of the public thread, so no API keys or login are required.
-
-1. Create the local input folder:
-
-   ```powershell
-   New-Item -ItemType Directory -Force data/raw/reddit_json
-   ```
-
-2. Open each link below in a browser, press **Ctrl+S**, and save it into `data/raw/reddit_json/` with the suggested filename.
-
-   | Sort | Link | Save as |
-   | :--- | :--- | :--- |
-   | top | `https://www.reddit.com/r/Philippines/comments/1uophc7/megathread_impeachment_trial_of_vice_president/.json?limit=500&sort=top&raw_json=1` | `top.json` |
-   | new | `https://www.reddit.com/r/Philippines/comments/1uophc7/megathread_impeachment_trial_of_vice_president/.json?limit=500&sort=new&raw_json=1` | `new.json` |
-   | controversial | `https://www.reddit.com/r/Philippines/comments/1uophc7/megathread_impeachment_trial_of_vice_president/.json?limit=500&sort=controversial&raw_json=1` | `controversial.json` |
-   | old | `https://www.reddit.com/r/Philippines/comments/1uophc7/megathread_impeachment_trial_of_vice_president/.json?limit=500&sort=old&raw_json=1` | `old.json` |
-   | qa | `https://www.reddit.com/r/Philippines/comments/1uophc7/megathread_impeachment_trial_of_vice_president/.json?limit=500&sort=qa&raw_json=1` | `qa.json` |
-
-3. Run the parser:
-
-   ```bash
-   python src/01_mining/parse_reddit_json.py
-   ```
-
-   It reads every `.json` file in `data/raw/reddit_json/`, removes junk and duplicate comments, hashes usernames, and writes `data/raw/reddit_comments_raw.csv`.
-
-> Raw Reddit JSON snapshots are intentionally **not committed** because they contain public comments tied to usernames. Only the anonymized CSV is tracked.
-
-### 2. Preprocess comments
+Because Reddit blocks automated Python scripts with HTTP 403, save public thread JSONs manually in your browser (`Ctrl+S`) into `data/raw/reddit_json/` (multiple threads and sorts supported), then run:
 
 ```bash
-python src/02_preprocessing/clean_comments.py
+python src/01_mining/parse_reddit_json.py
+python run_pipeline.py
 ```
 
-This currently applies the YouTube cleaning pipeline (empty/URL removal, exact-text deduplication, minimum word count, per-user cap, affect metadata) and writes `data/processed/youtube_comments_clean.csv`.
+### 3. Complete the 5-Member Human Gold Standard Annotation (Recommended Final Step)
+
+1. Each of the 5 members opens their assigned file in `data/annotated/sheets/` (`member_1.csv` .. `member_5.csv`) and reads `data/annotated/ANNOTATION_GUIDELINES.md`.
+2. Fill the `human_label` column (`Positive`, `Negative`, or `Neutral`) for all 250 rows (50 shared calibration rows for Fleiss' $\kappa$ + 200 unique rows = 1,050 unique gold-labeled comments).
+3. Merge labels, compute inter-annotator agreement, and re-run modeling + analysis on the true Human Gold Standard:
+
+```bash
+python src/04_modeling/merge_annotations.py
+python run_pipeline.py --mode gold
+pytest -v tests/verify_deliverables.py
+```
 
 ---
 
-## Methodology Notes
+## Team (5 Members)
 
-- **Anonymization:** YouTube channel IDs/authors and Reddit authors are hashed with SHA-256 and shortened; plain usernames are never stored.
-- **Reddit deduplication:** The same comment appears in multiple sort-order snapshots, so duplicates are removed by comparing normalized text.
-- **Text variants:** Cleaning produces `text_clean` (preserves emojis, capitalization, and punctuation for affect analysis) and `text_tfidf` (normalized lowercase tokens for TF-IDF / classical ML).
-- **Limitations:** The corpus covers 18 YouTube news clips and one Reddit megathread. Results reflect these communities and are not representative of the entire Philippine public.
-
----
-
-## Team
-
-- John Cyril Espina
+- John Cyril Espina — `data/annotated/sheets/member_1.csv` *(completed: 250/250)*
+- *(Teammate 2 — Reddit mining & `member_2.csv` annotation)*
+- *(Teammate 3 — Data collection & `member_3.csv` annotation)*
+- *(Teammate 4 — Data collection & `member_4.csv` annotation)*
+- *(Teammate 5 — Data collection & `member_5.csv` annotation)*

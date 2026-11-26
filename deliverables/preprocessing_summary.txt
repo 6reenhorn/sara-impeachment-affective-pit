@@ -1,0 +1,63 @@
+=== Stage 2: Unified NLP Preprocessing Summary ===
+
+Stage                                            |   Total |  YouTube |  Reddit
+-------------------------------------------------------------------------------
+0. Raw merged input                              |  14,110 |   12,779 |   1,331
+1. After cleaning & removing empty/URL-only      |  13,888 |   12,560 |   1,328
+2. After exact normalized-text deduplication     |  13,573 |   12,245 |   1,328
+3. After keeping >= 3 words                      |  12,903 |   11,641 |   1,262
+4. After capping <= 5 comments/user              |  11,969 |   11,102 |     867
+5. Final NLP-preprocessed dataset                |  11,969 |   11,102 |     867
+
+--- Clean Dataset by Platform ---
+platform
+youtube    11102
+reddit       867
+
+--- Clean Dataset by Language Bucket ---
+  Filipino/Tagalog         :  8,592 (71.8%)
+  Taglish/Code-switched    :  1,406 (11.7%)
+  English                  :  1,239 (10.4%)
+  Bisaya/Other             :    732 (6.1%)
+
+Median words/comment: 12.0
+Mean words/comment:   17.5
+Unique user hashes:   8,767
+
+--- Sample Before / After NLP Transformations (for Task 6 Slides) ---
+
+Example 1 [youtube | Filipino/Tagalog]:
+  text_clean:      Luistro umuwi ka nlng sa batangas sayang lang talaga bayad saiyo ng taumbayan
+  tokens:          luistro umuwi ka nlng sa batangas sayang lang talaga bayad saiyo ng taumbayan
+  tokens_no_stop:  luistro umuwi nlng batangas sayang bayad saiyo taumbayan
+  text_lemmatized: luistro umuwi nlng batangas sayang bayad saiyo taumbayan
+
+Example 2 [youtube | English]:
+  text_clean:      MAM CAN YOU PLEASE SPELL BLUDGEONING?!? 😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂
+  tokens:          mam can you please spell bludgeoning
+  tokens_no_stop:  mam please spell bludgeoning
+  text_lemmatized: mam please spell bludgeon
+
+Example 3 [youtube | Filipino/Tagalog]:
+  text_clean:      Ayaw pa ninyo isa na lang , ma paikli na yong trial , less trabaho , gastos , oras ! Ay naku hindi pa ba pantay yan pabor nga sa inyo dahil 
+  tokens:          ayaw pa ninyo isa na lang ma paikli na yong trial less trabaho gastos oras ay naku hindi pa ba pantay yan pabor nga sa inyo dahil iisa na la
+  tokens_no_stop:  ayaw ninyo isa paikli yong trial less trabaho gastos oras naku hindi pantay pabor inyo iisa debatihan ninyo
+  text_lemmatized: ayaw ninyo isa paikli yong trial less trabaho gastos oras naku hindi pantay pabor inyo iisa debatihan ninyo
+
+Example 4 [youtube | Taglish/Code-switched]:
+  text_clean:      WASTING OF THE COURTS TIME, COUNCIL FOR THE DEFENSE. KAKA UMAY KAYO. WALA KAYONG DEFENSA. NAG THREAT ANG VP!!!
+  tokens:          wasting of the courts time council for the defense kaka umay kayo wala kayong defensa nag threat ang vp
+  tokens_no_stop:  wasting courts time council defense kaka umay wala kayong defensa threat vp
+  text_lemmatized: waste court time council defense kaka umay wala kayong defensa threat vp
+
+Example 5 [reddit | English]:
+  text_clean:      Summa Cum Laude from University of Prison.
+  tokens:          summa cum laude from university of prison
+  tokens_no_stop:  summa cum laude university prison
+  text_lemmatized: summa cum laude university prison
+
+Example 6 [youtube | Filipino/Tagalog]:
+  text_clean:      Articulate, competent ang sagot ng analyst galing..❤
+  tokens:          articulate competent ang sagot ng analyst galing
+  tokens_no_stop:  articulate competent sagot analyst galing
+  text_lemmatized: articulate competent sagot analyst galing
