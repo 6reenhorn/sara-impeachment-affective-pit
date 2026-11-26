@@ -129,7 +129,7 @@ pytest -v tests/verify_deliverables.py
 ## Team (5 Members)
 
 - John Cyril Espina — `data/annotated/sheets/member_1.csv` *(completed: 250/250)*
-- *(Teammate 2 — Reddit mining & `member_2.csv` annotation)*
+- Den Jester Antonio — `data/annotated/sheets/member_2.csv` *(completed: 250/250)*
 - *(Teammate 3 — Data collection & `member_3.csv` annotation)*
 - *(Teammate 4 — Data collection & `member_4.csv` annotation)*
 - *(Teammate 5 — Data collection & `member_5.csv` annotation)*
